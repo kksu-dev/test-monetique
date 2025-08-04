@@ -21,9 +21,9 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                .cors(cors -> {})  // active la config CORS personnalisée
+                .cors(cors -> {})
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()  // options sans auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .httpBasic();
@@ -32,8 +32,8 @@ public class SecurityConfig {
 
     @Bean
     public InMemoryUserDetailsManager userDetailsService() {
-        UserDetails user = User.withUsername("user")
-                .password("{noop}user123")
+        UserDetails user = User.withUsername("admin")
+                .password("{noop}admin@2025")
                 .roles("USER")
                 .build();
 

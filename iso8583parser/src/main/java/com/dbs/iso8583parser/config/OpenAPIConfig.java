@@ -10,5 +10,5 @@ import org.springframework.context.annotation.Configuration;
         scheme = "basic"
 )
 public class OpenAPIConfig {
-    // Rien d'autre à faire ici ! Swagger reconnaîtra automatiquement ce schéma
+
 }

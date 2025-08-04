@@ -24,6 +24,8 @@ public class ISOMessageController {
 
     @Autowired
     private ISOMessageService service;
+
+    //Je construis mon message de retour json
     private ResponseEntity<Map<String, Object>> buildResponse(HttpStatus status, String message, Object data) {
         Map<String, Object> body = new HashMap<>();
         body.put("statusCode", status.value());
@@ -32,6 +34,7 @@ public class ISOMessageController {
         return new ResponseEntity<>(body, status);
     }
 
+    //Fonction qui me permet de d'uploader le fichier xml et l'enregistrer dans la BD
     @PostMapping(value = "/upload", consumes = "multipart/form-data")
     public ResponseEntity<Map<String, Object>> upload(@RequestParam("file") MultipartFile file) {
         try {
@@ -42,7 +45,7 @@ public class ISOMessageController {
         }
     }
 
-
+    //Fonction qui me permet d'obtenir la liste des messages IS 8583 paginées
     @GetMapping
     public ResponseEntity<Map<String, Object>> list(@RequestParam(defaultValue = "0") int page,
                                                     @RequestParam(defaultValue = "10") int size) {
@@ -52,6 +55,7 @@ public class ISOMessageController {
         messages.getContent().forEach(msg -> {
             if (msg.getPan() != null && !msg.getPan().isEmpty()) {
                 try {
+                    //Ici je decripte le PAN pour retourner la bonne valeur
                     String decryptedPan = AESUtil.decrypt(msg.getPan());
                     msg.setPan(decryptedPan);
                 } catch (Exception e) {
@@ -64,6 +68,7 @@ public class ISOMessageController {
     }
 
 
+    //Fonction qui me permet d'obtenir les details du message ISO 8583 par son ID
     @GetMapping("/{id}")
     public ResponseEntity<Map<String, Object>> getOne(@PathVariable Long id) {
         Optional<ISOMessage> msg = repository.findById(id);
@@ -71,7 +76,7 @@ public class ISOMessageController {
         return msg.map(isoMessage -> {
             if (isoMessage.getPan() != null && !isoMessage.getPan().isEmpty()) {
                 try {
-                    // Bien appeler la méthode statique depuis AESUtil
+                    //Ici je decripte le PAN pour retourner la bonne valeur
                     String decryptedPan = AESUtil.decrypt(isoMessage.getPan());
                     isoMessage.setPan(decryptedPan);
                 } catch (Exception e) {
@@ -83,7 +88,7 @@ public class ISOMessageController {
     }
 
 
-
+    //Ici je supprime le message ISO 8583 par son ID
     @DeleteMapping("/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
         if (repository.existsById(id)) {
